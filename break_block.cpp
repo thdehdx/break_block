@@ -57,7 +57,7 @@ int INDEX;//디버깅 전용
 
 int main(void)
 {
-START:
+	START:
 	num = 0;
 	initGame();
 
