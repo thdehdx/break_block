@@ -3,7 +3,7 @@
 #include <conio.h> //getch()와 kbhit() 함수 사용
 #include <time.h>
 
-#define OVER 3
+#define OVER 3//바닥에 닿으면 게임오버를 시키기위해 정의
 #define LINE 2
 #define BLOCK 1
 #define EMPTY 0
@@ -23,25 +23,25 @@ using namespace std;
 
 enum GameAction { MOVE_LEFT = 1, MOVE_RIGHT, GAME_QUIT };
 
-void initGame(); //게임 초기화
-void drawGame(int blockX); // 게임 화면을 그리는 함수
-int getGameAction(); // 게임의 기능을 선택하는 함수
-void updateGame(); //게임의 상태값 업데이트 함수
+void initGame();
+void drawGame(int blockX);
+int getGameAction();
+void updateGame();
 void updateBall(void);
 void updateblock(void);
-bool bar_collision(int blockX);  //블록이 게임보드와 충돌이 났는지 확인하는 함수
+bool bar_collision(int blockX);
 bool ball_collision(int ballX, int ballY);
 void corner_collision(void);
 bool direct_ball(int ballX, int ballY);
 bool block_collision(int ballX, int ballY);
 bool end_collision(int ballX, int ballY);
-void gotoXY(int x, int y); //콘솔 화면에서 커서를 특정 위치로 이동
+void gotoXY(int x, int y);
 void indexCheck(void);//디버깅 전용
 
 int blockX; //보드 안에 막대의 위치
 int ex_ballX, ex_ballY;//보드 안의 이전 공 위치
 int ballX, ballY;//보드 안의 공의 위치
-int directX, directY;
+int directX, directY;//공의 방향 결정
 int decide;//초기 공의 방향 결정;
 
 bool gameFlag; //게임 종료 플래그
@@ -57,7 +57,7 @@ int INDEX;//디버깅 전용
 
 int main(void)
 {
-	START:
+START:
 	num = 0;
 	initGame();
 
@@ -225,11 +225,12 @@ void updateGame()
 	}
 }
 
-void updateBall(void)
+void updateBall(void)//볼 업데이트 함수
 {
 	ex_ballX = ballX;
 	ex_ballY = ballY;
-	if (num == 2) {
+	if (num == 2)//bar속도가 공속도의 2배
+	{
 		ballX += directX, ballY += directY;
 		num = 0;
 	}
@@ -254,7 +255,7 @@ void updateBall(void)
 	}
 }
 
-void updateblock(void)
+void updateblock(void)//부서지는 블럭 업데이트 함수
 {
 	int x, k;
 
@@ -282,7 +283,7 @@ bool bar_collision(int blockX) //게임막대와 옆 벽의 충돌 검사
 	return false;
 }
 
-bool ball_collision(int ballX, int ballY)
+bool ball_collision(int ballX, int ballY)//공 충돌 검사 함수
 {
 	int x;
 
@@ -292,13 +293,14 @@ bool ball_collision(int ballX, int ballY)
 			return true;
 	}
 
-	if (BOARD_ARR[ballY - 3][ballX] == LINE)
+	if (BOARD_ARR[ballY - 3][ballX] == LINE)//공과 게임보드 충돌 판별
 		return true;
 
 	return false;
 }
 
-void corner_collision(void) {
+void corner_collision(void)//공과 모서리 충돌 함수
+{
 	int x, y, k;
 	for (x = 0; x < X_LEN; x++) {
 		for (y = 0; y < (Y_LEN - 3); y++) {
@@ -338,7 +340,7 @@ void corner_collision(void) {
 	}
 }
 
-bool direct_ball(int ballX, int ballY)//세로벽이면 true
+bool direct_ball(int ballX, int ballY)//공의 방향 결정함수(세로벽이면 true)
 {
 	if (BOARD_ARR[ballY][ballX + 1] == LINE || BOARD_ARR[ballY][ballX - 1] == LINE)
 		return true;
@@ -346,7 +348,7 @@ bool direct_ball(int ballX, int ballY)//세로벽이면 true
 	return false;
 }
 
-bool block_collision(int ballX, int ballY)
+bool block_collision(int ballX, int ballY)//부서지는 블럭과 공의 충돌 검사 함수
 {
 	if (BOARD_ARR[ballY - 3][ballX] == BLOCK)
 		return true;
@@ -354,9 +356,10 @@ bool block_collision(int ballX, int ballY)
 	return false;
 }
 
-bool end_collision(int ballX, int ballY) {
-	if(ballY == Y_BOT_BOARDER - 1)
-	return true;
+bool end_collision(int ballX, int ballY)//게임보드 밑바닥과 공의 충돌 검사 함수(닿으면 게임오버)
+{
+	if (ballY == Y_BOT_BOARDER - 1)
+		return true;
 
 	return false;
 }
